@@ -26,6 +26,9 @@ db.once('open', function () {
 app.get('/', (req, res) => {
     res.send(`<h1>Hello, Go to <a href='/api-doc'>/api-doc</a> route to see documentation</h1>`);
 });
+app.use('/api/users', require('./controller/user'))
+app.use('/api/login', require('./controller/login'))
+app.use('/api/me', require('./controller/me'))
 
 // start
 app.listen(port, () => {

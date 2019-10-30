@@ -8,6 +8,120 @@ servers:
   - url: http://localhost:3001
     description: Local server
 
+paths:
+  /api/login:
+    post:
+        tags:
+          - Login
+        summary: Login
+        requestBody:
+          content:
+            application/json:
+              schema:
+                required:
+                  - username
+                  - password
+                properties:
+                  username:
+                    type: string
+                  password:
+                    type: string
+        responses:
+          '200': 
+            description: Logged in succesfully
+            content:
+              application/json:
+                schema: 
+                  type: object
+                  properties: 
+                    token: 
+                      type: string
+                      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoic3RyaW5nIiwiaWQiOiI1ZGFiODA1NjI3ZDYyMDE0MTQxMzBhOGQiLCJpYXQiOjE1NzE1NzEwOTd9.dNADXPhAwg7lc8St8SktJ63VsIIBB2vM5k8hzxLzSlE
+          '400': 
+            $ref: '#/components/responses/BadRequestError'
+          '404': 
+            $ref: '#/components/responses/NotFoundError'
+          
+  /api/me:
+    get:
+      tags: 
+        - Me
+      summary: Returns user currently logged in
+      responses:
+        '200': 
+          description: A User object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404': 
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/users:
+    get:
+      tags: 
+        - Users
+      summary: Returns a list of all users
+      responses:
+        '200': 
+          description: Array os User objects
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/User'
+    post:
+      tags:
+        - Users
+      summary: Register a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201': 
+          description: User registered
+        '400': 
+          $ref: '#/components/responses/BadRequestError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+  
+  /api/users/{_id}:
+    get:
+      tags: 
+        - Users
+      summary: Returns single user
+      parameters:
+        - name: _id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: A User object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+        '404': 
+            $ref: '#/components/responses/NotFoundError'
+
 components:
   schemas:
     User:
