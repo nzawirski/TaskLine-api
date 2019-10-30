@@ -1,0 +1,33 @@
+---
+openapi: 3.0.0
+info:
+  version: 0.1.0
+  title: TaskLine
+  description: Project management app
+servers:
+- url: http://localhost:3001
+  description: Local server
+
+components:
+  schemas:
+
+  securitySchemes:
+    JWT token:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
+
+  responses:
+    BadRequestError: #400
+      description: Bad request format or required parameter is missing
+    ForbiddenError: #401
+      description: User is not allowed to have access to this resource
+    UnauthorizedError: #403
+      description: Access token is missing or invalid
+    NotFoundError: #404
+      description: Item not found   
+    ConflictError: #409
+      description: Resorce already exists
+
+security:
+  - JWT token: []
