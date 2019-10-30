@@ -5,17 +5,92 @@ info:
   title: TaskLine
   description: Project management app
 servers:
-- url: http://localhost:3001
-  description: Local server
+  - url: http://localhost:3001
+    description: Local server
 
 components:
   schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 5da0ff5a9d4a231ad0c9996a
+        username:
+          type: string
+        email:
+          type: string
+        create_date:
+          type: string
+          example: "2019-10-01T18:44:43.886Z"
+
+    Password:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        password:
+          type: string
+
+    Project:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 5da0ff5a9d4a231ad0c9996a
+        name:
+          type: string
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+        members:
+          type: array
+          items:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/User"
+              role:
+                type: string
+                example: admin
+        create_date:
+          type: string
+          example: "2019-10-01T18:44:43.886Z"
+
+    Task:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 5da0ff5a9d4a231ad0c9996a
+        name:
+          type: string
+        description:
+          type: string
+        due_date:
+          type: string
+          example: "2019-10-01T18:44:43.886Z"
+        added_by:
+          $ref: "#/components/schemas/User"
+        assigned_users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        parent_project:
+          $ref: "#/components/schemas/Project"
+        status:
+          type: string
+          example: In progress
+        create_date:
+          type: string
+          example: "2019-10-01T18:44:43.886Z"
 
   securitySchemes:
-    JWT token:            
+    JWT token:
       type: http
       scheme: bearer
-      bearerFormat: JWT 
+      bearerFormat: JWT
 
   responses:
     BadRequestError: #400
@@ -25,7 +100,7 @@ components:
     UnauthorizedError: #403
       description: Access token is missing or invalid
     NotFoundError: #404
-      description: Item not found   
+      description: Item not found
     ConflictError: #409
       description: Resorce already exists
 
