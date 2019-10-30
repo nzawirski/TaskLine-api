@@ -122,6 +122,48 @@ paths:
         '404': 
             $ref: '#/components/responses/NotFoundError'
 
+  /api/projects/:
+    get:
+      tags:
+        - Projects 
+      summary: Returns projects of currently logged in user
+      responses:
+        '200': 
+          description: An array of Project objects
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404': 
+          $ref: '#/components/responses/NotFoundError'
+    post:
+      tags:
+        - Projects
+      summary: Add a project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '201': 
+          description: Created Project JSON object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+
 components:
   schemas:
     User:

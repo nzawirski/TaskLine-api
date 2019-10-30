@@ -29,6 +29,7 @@ app.get('/', (req, res) => {
 app.use('/api/users', require('./controller/user'))
 app.use('/api/login', require('./controller/login'))
 app.use('/api/me', require('./controller/me'))
+app.use('/api/projects', require('./controller/project'))
 
 // start
 app.listen(port, () => {
