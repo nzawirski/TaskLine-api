@@ -189,6 +189,40 @@ paths:
         '404': 
           $ref: '#/components/responses/NotFoundError'
 
+    put:
+      tags: 
+        - Projects
+      summary: Edit a Project
+      parameters:
+        - name: _id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '200': 
+          description: A Project object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+            $ref: '#/components/responses/NotFoundError'
+
 components:
   schemas:
     User:

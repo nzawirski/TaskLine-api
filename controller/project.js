@@ -76,8 +76,6 @@ router.get('/:_id', readToken, (req, res) => {
                 //Check if user is a member of this project
                 let isMember = false;
                 project.members.forEach(member => {
-                    console.log(member.user)
-                    console.log(authData.id)
                     isMember = (member.user._id == authData.id) ? true : isMember
                 })
 
@@ -85,6 +83,48 @@ router.get('/:_id', readToken, (req, res) => {
                     res.status(403).send("User is not a member of this project")
                 }else{
                     res.json(project);
+                }
+            });
+    })
+})
+
+//Edit project
+router.put('/:_id', readToken, (req, res) => {
+    const { name } = req.body;
+    jwt.verify(req.token, config.secretKey, (err, authData) => {
+        if (err) {
+            return res.status(401).json({
+                message: err.message
+            })
+        }
+        if (!name) {
+            return res.status(400).json({
+                message: "Required parameters are missing"
+            })
+        }
+        Project.findById(req.params._id)
+            .populate('members.user')
+            .exec((err, project) => {
+                if (err) {
+                    return res.status(500).json({ message: err.message })
+                };
+                if (!project) {
+                    return res.status(404).send("Project not found")
+                }
+                //Check if user is a member AND ADMIN  of this project
+                let isAdmin = false;
+                project.members.forEach(member => {
+                    isAdmin = (member.user._id == authData.id && member.role == 'admin') ? true : isAdmin
+                })
+
+                if(!isAdmin){
+                    res.status(403).send("User cannot perform this action")
+                }else{
+                    project.name = name
+                    project.save((err) => {
+                        if (err) return console.error(err);
+                        res.json(project);
+                    })
                 }
             });
     })
