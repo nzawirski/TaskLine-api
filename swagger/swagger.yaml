@@ -223,6 +223,44 @@ paths:
         '404': 
             $ref: '#/components/responses/NotFoundError'
 
+  /api/projects/{_id}/tasks:
+    post:
+      tags:
+        - Projects
+      summary: Add Task to a Project
+      parameters:
+        - name: _id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                due_date:
+                  type: string
+      responses:
+        '201': 
+          description: Created Task JSON object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+
 components:
   schemas:
     User:
