@@ -204,7 +204,7 @@ router.post('/:_id/members', readToken, (req, res) => {
                 if (!project) {
                     return res.status(404).send("Project not found")
                 }
-                //Check if LOGGED user is a member AND ADMIN  of this project
+                //Check if LOGGED user is a member AND ADMIN of this project
                 let isAdmin = false;
                 project.members.forEach(member => {
                     isAdmin = (member.user._id == authData.id && member.role == 'admin') ? true : isAdmin
@@ -227,20 +227,131 @@ router.post('/:_id/members', readToken, (req, res) => {
                         project.members.forEach(member => {
                             isMember = (member.user._id == newUser) ? true : isMember
                         })
-                        if(isMember){
+                        if (isMember) {
                             return res.status(400).send("User is already a member of this project")
                         }
-                        project.members.push({ user: newUser, role: "member"})
+                        project.members.push({ user: newUser, role: "member" })
                         project.save((err) => {
                             if (err) return console.error(err);
                             res.status(201).json(project);
                         })
                     })
-
-
-
-
             });
     })
 })
+
+//Get member
+router.get('/:_id/members/:_memberID', readToken, (req, res) => {
+    jwt.verify(req.token, config.secretKey, (err, authData) => {
+        if (err) {
+            return res.status(401).json({
+                message: err.message
+            })
+        }
+        Project.findById(req.params._id)
+            .populate('members.user')
+            .exec((err, project) => {
+                if (err) {
+                    return res.status(500).json({ message: err.message })
+                };
+                if (!project) {
+                    return res.status(404).send("Project not found")
+                }
+
+                //Check if LOGGED user is a member of this project
+                let isMember = false;
+                project.members.forEach(member => {
+                    isMember = (member.user._id == authData.id) ? true : isMember
+                })
+
+                if (!isMember) {
+                    return res.status(403).send("User is not a member of this project")
+                }
+
+                res.json(project.members.id(req.params._memberID));
+            });
+    })
+})
+
+//Edit project member
+router.put('/:_id/members/:_memberID', readToken, (req, res) => {
+    const { role } = req.body;
+    jwt.verify(req.token, config.secretKey, (err, authData) => {
+        if (err) {
+            return res.status(401).json({
+                message: err.message
+            })
+        }
+        if (!role) {
+            return res.status(400).json({
+                message: "Required parameters are missing"
+            })
+        }
+        Project.findById(req.params._id)
+            .populate('members.user')
+            .exec((err, project) => {
+                if (err) {
+                    return res.status(500).json({ message: err.message })
+                };
+                if (!project) {
+                    return res.status(404).send("Project not found")
+                }
+
+                //Check if LOGGED user is a member AND ADMIN of this project
+                let isAdmin = false;
+                project.members.forEach(member => {
+                    isAdmin = (member.user._id == authData.id && member.role == 'admin') ? true : isAdmin
+                })
+
+                if (!isAdmin) {
+                    return res.status(403).send("User cannot perform this action")
+                }
+
+                project.members.id(req.params._memberID).role = role;
+                project.save((err) => {
+                    if (err) return res.status(400).send(err.message);
+                    res.json(project);
+                })
+            });
+    })
+})
+
+//Remove member from project
+router.delete('/:_id/members/:_memberID', readToken, (req, res) => {
+
+    jwt.verify(req.token, config.secretKey, (err, authData) => {
+        if (err) {
+            return res.status(401).json({
+                message: err.message
+            })
+        }
+        Project.findById(req.params._id)
+            .exec((err, project) => {
+                if (err) {
+                    return res.status(500).json({ message: err.message })
+                };
+                if (!project) {
+                    return res.status(404).send("Project not found")
+                }
+
+                //Check if LOGGED user is a member AND ADMIN of this project
+                let isAdmin = false;
+                project.members.forEach(member => {
+                    isAdmin = (member.user._id == authData.id && member.role == 'admin') ? true : isAdmin
+                })
+
+                if (!isAdmin) {
+                    return res.status(403).send("User cannot perform this action")
+                }
+
+                project.members = project.members.filter(e => e._id != req.params._memberID)
+
+                project.save((err) => {
+                    if (err) return res.status(400).send(err.message);
+                    res.json(project);
+                })
+            });
+    })
+})
+
 module.exports = router

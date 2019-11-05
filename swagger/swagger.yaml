@@ -153,7 +153,7 @@ paths:
                   type: string
       responses:
         '201': 
-          description: Created Project JSON object
+          description: Created Project object
           content:
             application/json:
               schema: 
@@ -250,7 +250,7 @@ paths:
                   type: string
       responses:
         '201': 
-          description: Created Task JSON object
+          description: Created Task object
           content:
             application/json:
               schema: 
@@ -284,7 +284,7 @@ paths:
                   description: user id
       responses:
         '201': 
-          description: Project JSON object
+          description: Project object
           content:
             application/json:
               schema: 
@@ -294,6 +294,99 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedError'
 
+  /api/projects/{_id}/members/{_memberID}:
+    get:
+      tags:
+        - Members
+      summary: Returns single Member
+      parameters:
+        - name: _id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: _memberID
+          in: path
+          description: Mebership ID (NOT user ID)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: A Member object
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+          $ref: '#/components/responses/NotFoundError'
+    put:
+      tags: 
+        - Members
+      summary: Edit a Member
+      parameters:
+        - name: _id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: _memberID
+          in: path
+          description: Mebership ID (NOT user ID)
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - role
+              properties:
+                role:
+                  type: string
+      responses:
+        '200': 
+          description: A Project object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+            $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      tags:
+        - Members
+      summary: Removes Member from Project
+      parameters:
+        - name: _id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: _memberID
+          in: path
+          description: Mebership ID (NOT user ID)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Member removed
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+          $ref: '#/components/responses/NotFoundError'
 
 components:
   schemas:
