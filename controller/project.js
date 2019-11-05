@@ -85,9 +85,9 @@ router.get('/:_id', readToken, (req, res) => {
                     isMember = (member.user._id == authData.id) ? true : isMember
                 })
 
-                if(!isMember){
+                if (!isMember) {
                     res.status(403).send("User is not a member of this project")
-                }else{
+                } else {
                     res.json(project);
                 }
             });
@@ -123,15 +123,16 @@ router.put('/:_id', readToken, (req, res) => {
                     isAdmin = (member.user._id == authData.id && member.role == 'admin') ? true : isAdmin
                 })
 
-                if(!isAdmin){
-                    res.status(403).send("User cannot perform this action")
-                }else{
-                    project.name = name
-                    project.save((err) => {
-                        if (err) return console.error(err);
-                        res.json(project);
-                    })
+                if (!isAdmin) {
+                    return res.status(403).send("User cannot perform this action")
                 }
+
+                project.name = name
+                project.save((err) => {
+                    if (err) return console.error(err);
+                    res.json(project);
+                })
+
             });
     })
 })
@@ -164,10 +165,10 @@ router.post('/:_id/tasks', readToken, (req, res) => {
                     isMember = (member.user == authData.id) ? true : isMember
                 })
 
-                if(!isMember){
+                if (!isMember) {
                     res.status(403).send("User is not a member of this project")
-                }else{
-                    let task = new Task({ name, description, due_date, added_by: authData.id, parent_project: project._id})
+                } else {
+                    let task = new Task({ name, description, due_date, added_by: authData.id, parent_project: project._id })
                     task.save((err) => {
                         if (err) return console.error(err);
                         project.tasks.push(task._id)
@@ -181,4 +182,65 @@ router.post('/:_id/tasks', readToken, (req, res) => {
     })
 })
 
+//Add member to project
+router.post('/:_id/members', readToken, (req, res) => {
+    const { newUser } = req.body;
+    jwt.verify(req.token, config.secretKey, (err, authData) => {
+        if (err) {
+            return res.status(401).json({
+                message: err.message
+            })
+        }
+        if (!newUser) {
+            return res.status(400).json({
+                message: "Please provide post content"
+            })
+        }
+        Project.findById(req.params._id)
+            .exec((err, project) => {
+                if (err) {
+                    return res.status(500).json({ message: err.message })
+                };
+                if (!project) {
+                    return res.status(404).send("Project not found")
+                }
+                //Check if LOGGED user is a member AND ADMIN  of this project
+                let isAdmin = false;
+                project.members.forEach(member => {
+                    isAdmin = (member.user._id == authData.id && member.role == 'admin') ? true : isAdmin
+                })
+
+                if (!isAdmin) {
+                    return res.status(403).send("User cannot perform this action")
+                }
+
+                User.findById(newUser)
+                    .exec((err, user) => {
+                        if (err) {
+                            return res.status(500).json({ message: err.message })
+                        };
+                        if (!user) {
+                            return res.status(404).send("User not found")
+                        }
+                        //Check if NEW user isn't already a member
+                        let isMember = false
+                        project.members.forEach(member => {
+                            isMember = (member.user._id == newUser) ? true : isMember
+                        })
+                        if(isMember){
+                            return res.status(400).send("User is already a member of this project")
+                        }
+                        project.members.push({ user: newUser, role: "member"})
+                        project.save((err) => {
+                            if (err) return console.error(err);
+                            res.status(201).json(project);
+                        })
+                    })
+
+
+
+
+            });
+    })
+})
 module.exports = router
