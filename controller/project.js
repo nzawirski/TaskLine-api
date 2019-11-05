@@ -47,7 +47,7 @@ router.post('/', readToken, (req, res) => {
             }
             let project = new Project({ name, members: [{ user: authData.id }] });
             project.save((err) => {
-                if (err) return console.error(err);
+                if (err) return res.status(400).send(err.message);
 
                 res.status(201).json(project);
             })
@@ -129,7 +129,7 @@ router.put('/:_id', readToken, (req, res) => {
 
                 project.name = name
                 project.save((err) => {
-                    if (err) return console.error(err);
+                    if (err) return res.status(400).send(err.message);
                     res.json(project);
                 })
 
@@ -170,10 +170,10 @@ router.post('/:_id/tasks', readToken, (req, res) => {
                 } else {
                     let task = new Task({ name, description, due_date, added_by: authData.id, parent_project: project._id })
                     task.save((err) => {
-                        if (err) return console.error(err);
+                        if (err) return res.status(400).send(err.message);
                         project.tasks.push(task._id)
                         project.save((err) => {
-                            if (err) return console.error(err);
+                            if (err) return res.status(400).send(err.message);
                             res.status(201).json(task);
                         })
                     })

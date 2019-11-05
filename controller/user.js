@@ -33,13 +33,13 @@ router.post('/', (req, res) => {
             return res.status(409).send("User already exists")
         }
         bcrypt.hash(password, saltRounds, (err, hash) => {
-            if (err) return console.error(err);
+            if (err) return res.status(500).send(err.message);
             let user = new User({ username: username, email: email })
             user.save((err, user) => {
-                if (err) return console.error(err);
+                if (err) return res.status(400).send(err.message);
                 let password = new Password({ user: user._id, password: hash })
                 password.save((err) => {
-                    if (err) return console.error(err);
+                    if (err) return res.status(500).send(err.message);
                 })
                 res.status(201).json(user);
             })

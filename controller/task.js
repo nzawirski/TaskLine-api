@@ -42,6 +42,54 @@ router.get('/:_id', readToken, (req, res) => {
     })
 })
 
+//Edit task
+router.put('/:_id', readToken, (req, res) => {
+    const { name, description, due_date, status } = req.body;
+    jwt.verify(req.token, config.secretKey, (err, authData) => {
+        if (err) {
+            return res.status(401).json({
+                message: err.message
+            })
+        }
+        Task.findById(req.params._id)
+            .populate('parent_project', 'name members')
+            .exec((err, task) => {
+                if (err) {
+                    return res.status(500).json({ message: err.message })
+                };
+                if (!task) {
+                    return res.status(404).send("Task not found")
+                }
+                //Check if user is a member of this project
+                let isMember = false;
+                task.parent_project.members.forEach(member => {
+                    isMember = (member.user._id == authData.id) ? true : isMember
+                })
+
+                if (!isMember) {
+                    return res.status(403).send("User is not a member of this project")
+                }
+
+                if(name){
+                    task.name = name
+                }
+                if(description){
+                    task.description = description
+                }
+                if(due_date){
+                    task.due_date = due_date
+                }
+                if(status){
+                    task.status = status
+                }
+                task.save((err) => {
+                    if (err) return res.status(400).send(err.message);
+                        res.json(task);
+                })
+            });
+    })
+})
+
 //Assign users to task
 router.post('/:_id/users', readToken, (req, res) => {
     const { assignee } = req.body
@@ -85,7 +133,6 @@ router.post('/:_id/users', readToken, (req, res) => {
                     return res.status(404).send("Assigne is not a member")
                 }
 
-                
                 //Check if user was already assigned to this task
                 let alreadyAssigned = false
                 task.assigned_users.forEach(user => {
