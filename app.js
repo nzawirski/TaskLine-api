@@ -30,6 +30,7 @@ app.use('/api/users', require('./controller/user'))
 app.use('/api/login', require('./controller/login'))
 app.use('/api/me', require('./controller/me'))
 app.use('/api/projects', require('./controller/project'))
+app.use('/api/tasks', require('./controller/task'))
 
 // start
 app.listen(port, () => {
