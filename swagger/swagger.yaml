@@ -222,6 +222,26 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404': 
             $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags: 
+        - Projects
+      summary: Delete a Project
+      parameters:
+        - name: _id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Project Deleted
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+            $ref: '#/components/responses/NotFoundError'
 
   /api/projects/{_id}/tasks:
     post:
@@ -451,7 +471,6 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '404': 
             $ref: '#/components/responses/NotFoundError'
-
     delete:
       tags: 
         - Tasks

@@ -24,4 +24,15 @@ const projectSchema = mongoose.Schema({
 	}
 });
 
+projectSchema.pre('deleteOne', { document: true, query: false }, async function(next) {
+    var project = this;
+    //remove comment docs recursively
+    await project.tasks.forEach(task => {
+        mongoose.model('Task').deleteOne({ _id: task }, (err) => {
+            if (err) console.error(err)
+        });
+    })
+    next()
+});
+
 module.exports = mongoose.model("Project", projectSchema);
