@@ -33,4 +33,20 @@ const taskSchema = mongoose.Schema({
   }
 });
 
+taskSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
+  var task = this;
+  // remove ref and recount comments amount
+  await mongoose.model('Project').findById(task.parent_project).exec((err, project) => {
+      if (err) console.error(err)
+
+      project.tasks = project.tasks.filter(e => e != String(task._id));
+
+      project.save((err) => {
+          if (err) console.error(err);
+      })
+  })
+
+  next()
+});
+
 module.exports = mongoose.model("Task", taskSchema);

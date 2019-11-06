@@ -452,6 +452,29 @@ paths:
         '404': 
             $ref: '#/components/responses/NotFoundError'
 
+    delete:
+      tags: 
+        - Tasks
+      summary: Delete a Task
+      parameters:
+        - name: _id
+          in: path
+          description: Task ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: Task Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+            $ref: '#/components/responses/NotFoundError'
+
   /api/tasks/{_id}/users:
     post:
       tags:
