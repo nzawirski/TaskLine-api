@@ -58,6 +58,32 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '404': 
           $ref: '#/components/responses/NotFoundError'
+    put:
+      tags:
+        - Me
+      summary: Edit a user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200': 
+          description: A User object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404': 
+          $ref: '#/components/responses/NotFoundError'
 
   /api/users:
     get:
