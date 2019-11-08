@@ -28,7 +28,7 @@ router.post('/', (req, res) => {
             };
 
             bcrypt.compare(password, passData.password, (err, _res) => {
-                if (err) throw err;
+                if (err) return res.status(500).json({ message: err.message })
                 if (_res) {
                     //pass good
                     jwt.sign({ user: user.username, id: user._id }, config.secretKey, (err, token) => {

@@ -18,7 +18,7 @@ router.get('/', readToken, (req, res) => {
             })
         }
         Project.find({ 'members.user': authData.id }, (err, projects) => {
-            if (err) return console.error(err);
+            if (err) return res.status(500).json({ message: err.message })
             res.json(projects);
         });
     })
@@ -269,7 +269,7 @@ router.post('/:_id/members', readToken, (req, res) => {
                         }
                         project.members.push({ user: newUser, role: "member" })
                         project.save((err) => {
-                            if (err) return console.error(err);
+                            if (err) return res.status(500).json({ message: err.message })
                             res.status(201).json(project);
                         })
                     })

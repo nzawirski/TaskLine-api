@@ -57,10 +57,10 @@ router.put('/', readToken, (req, res) => {
                         };
 
                         bcrypt.hash(password, saltRounds, (err, hash) => {
-                            if (err) return console.error(err);
+                            if (err) return res.status(500).json({ message: err.message })
                             _password.password = hash
                             _password.save((err) => {
-                                if (err) return console.error(err);
+                                if (err) return res.status(500).json({ message: err.message })
                             })
                         })
                     })

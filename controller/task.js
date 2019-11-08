@@ -148,7 +148,7 @@ router.post('/:_id/users', readToken, (req, res) => {
                 }
 
                 task.save((err) => {
-                    if (err) return console.error(err);
+                    if (err) return res.status(500).json({ message: err.message })
                     res.json(task);
                 })
             });

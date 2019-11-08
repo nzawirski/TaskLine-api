@@ -13,7 +13,7 @@ const Password = require('../model/password')
 //List of users
 router.get('/', (req, res) => {
     User.find({}, (err, users) => {
-        if (err) return console.error(err);
+        if (err) return res.status(500).json({ message: err.message })
         res.json(users);
     });
 })
