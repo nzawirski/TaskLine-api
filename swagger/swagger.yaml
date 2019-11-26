@@ -7,6 +7,8 @@ info:
 servers:
   - url: http://localhost:3001
     description: Local server
+  - url: https://https://nz-taskline-api.herokuapp.com/
+    description: Heroku server
 
 paths:
   /api/login:
