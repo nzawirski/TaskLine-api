@@ -10,6 +10,7 @@ const app = express();
 const port = config.port;
 app.use(express.json());
 app.use(cors());
+app.use('/uploads', express.static('uploads'))
 
 // doc
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDoc));

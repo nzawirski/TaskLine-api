@@ -87,6 +87,45 @@ paths:
         '404': 
           $ref: '#/components/responses/NotFoundError'
 
+  /api/me/profilePic:
+    put:
+      tags:
+        - Me
+      summary: Change Profile Picture
+      requestBody:
+          content:
+            multipart/form-data:
+              schema:
+                properties:
+                  image:
+                    type: file
+      responses:
+        '200': 
+          description: A User object
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags:
+        - Me
+      summary: Delete current Profile Picture
+      responses:
+        '200': 
+          description: Picture deleted or there was no picture in the beginning
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+          $ref: '#/components/responses/NotFoundError'
+
   /api/users:
     get:
       tags: 
@@ -573,6 +612,8 @@ components:
         create_date:
           type: string
           example: "2019-10-01T18:44:43.886Z"
+        profile_pic:
+          type: string
 
     Password:
       type: object

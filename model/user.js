@@ -13,6 +13,9 @@ const userSchema = mongoose.Schema({
 	create_date:{
 		type: Date,
 		default: Date.now
+	},
+	profilePic:{
+		type: String
 	}
 });
 

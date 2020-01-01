@@ -62,3 +62,6 @@ typings/
 
 # yarn lcok
 yarn.lock
+
+#uploads
+uploads/
