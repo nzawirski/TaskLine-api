@@ -28,7 +28,7 @@ router.post('/', (req, res) => {
         })
     }
 
-    User.findOne({ username: username }, (err, user) => {
+    User.findOne({ email: email }, (err, user) => {
         if (user) {
             return res.status(409).send("User already exists")
         }
