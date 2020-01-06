@@ -21,10 +21,10 @@ paths:
             application/json:
               schema:
                 required:
-                  - username
+                  - email
                   - password
                 properties:
-                  username:
+                  email:
                     type: string
                   password:
                     type: string
@@ -200,7 +200,9 @@ paths:
           content:
             application/json:
               schema: 
-                $ref: '#/components/schemas/Project'
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Project'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404': 
@@ -646,6 +648,9 @@ components:
                 type: string
                 example: admin
         create_date:
+          type: string
+          example: "2019-10-01T18:44:43.886Z"
+        latestActivity:
           type: string
           example: "2019-10-01T18:44:43.886Z"
 

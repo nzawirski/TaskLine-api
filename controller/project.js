@@ -126,7 +126,7 @@ router.put('/:_id', readToken, (req, res) => {
                 if (!isAdmin) {
                     return res.status(403).send("User cannot perform this action")
                 }
-
+                project.latestActivity = Date.now()
                 project.name = name
                 project.save((err) => {
                     if (err) return res.status(400).send(err.message);
@@ -209,6 +209,7 @@ router.post('/:_id/tasks', readToken, (req, res) => {
                     task.save((err) => {
                         if (err) return res.status(400).send(err.message);
                         project.tasks.push(task._id)
+                        project.latestActivity = Date.now()
                         project.save((err) => {
                             if (err) return res.status(400).send(err.message);
                             res.status(201).json(task);
@@ -268,6 +269,7 @@ router.post('/:_id/members', readToken, (req, res) => {
                             return res.status(400).send("User is already a member of this project")
                         }
                         project.members.push({ user: newUser, role: "member" })
+                        project.latestActivity = Date.now()
                         project.save((err) => {
                             if (err) return res.status(500).json({ message: err.message })
                             res.status(201).json(project);
@@ -382,7 +384,7 @@ router.delete('/:_id/members/:_memberID', readToken, (req, res) => {
                 }
 
                 project.members = project.members.filter(e => e._id != req.params._memberID)
-
+                project.latestActivity = Date.now()
                 project.save((err) => {
                     if (err) return res.status(400).send(err.message);
                     res.json(project);

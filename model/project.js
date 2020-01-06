@@ -21,6 +21,10 @@ const projectSchema = mongoose.Schema({
 	create_date:{
 		type: Date,
 		default: Date.now
+    },
+    latestActivity:{
+		type: Date,
+		default: Date.now
 	}
 });
 
