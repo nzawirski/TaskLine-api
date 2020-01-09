@@ -16,7 +16,8 @@ app.use('/uploads', express.static('uploads'))
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 // db
-mongoose.connect(config.databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(config.databaseUrl, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.set('debug', true)
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {

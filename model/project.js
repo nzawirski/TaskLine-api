@@ -25,7 +25,10 @@ const projectSchema = mongoose.Schema({
     latestActivity:{
 		type: Date,
 		default: Date.now
-	}
+    },
+    isAdmin:{ //never save anything on that field
+        type: Boolean
+    }
 });
 
 projectSchema.pre('deleteOne', { document: true, query: false }, async function(next) {

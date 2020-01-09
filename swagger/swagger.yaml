@@ -653,6 +653,8 @@ components:
         latestActivity:
           type: string
           example: "2019-10-01T18:44:43.886Z"
+        isAdmin:
+          type: boolean
 
     Task:
       type: object

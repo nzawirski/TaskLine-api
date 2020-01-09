@@ -66,12 +66,6 @@ router.get('/:_id', readToken, (req, res) => {
         Project.findById(req.params._id)
             .populate('members.user')
             .populate('tasks')
-            .populate({
-                path: "tasks",
-                populate: {
-                    path: "added_by"
-                }
-            })
             .exec((err, project) => {
                 if (err) {
                     return res.status(500).json({ message: err.message })
@@ -84,12 +78,28 @@ router.get('/:_id', readToken, (req, res) => {
                 project.members.forEach(member => {
                     isMember = (member.user._id == authData.id) ? true : isMember
                 })
-
                 if (!isMember) {
-                    res.status(403).send("User is not a member of this project")
-                } else {
-                    res.json(project);
+                    return res.status(403).send("User is not a member of this project")
                 }
+                //Check if admin
+                let isAdmin = false;
+                project.members.forEach(member => {
+                    isAdmin = (member.user._id == authData.id && member.role == 'admin') ? true : isAdmin
+                })
+                project.isAdmin = isAdmin
+
+                // Another query because sort in populate does not work: https://github.com/Automattic/mongoose/issues/2202
+                Task.find({"parent_project": project._id})
+                .sort({due_date: 1})
+                .populate("added_by")
+                .exec((err, tasks) => {
+                    if (err) {
+                        return res.status(500).json({ message: err.message })
+                    };
+                    project.tasks = tasks
+                    
+                    res.json(project);
+                })
             });
     })
 })

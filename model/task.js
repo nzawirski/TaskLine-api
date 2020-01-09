@@ -33,6 +33,8 @@ const taskSchema = mongoose.Schema({
   }
 });
 
+taskSchema.index({ parent_project: 1, due_date: 1 })
+
 taskSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
   var task = this;
   // remove ref and recount comments amount
