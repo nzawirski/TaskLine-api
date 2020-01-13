@@ -46,6 +46,30 @@ router.post('/', (req, res) => {
         })
     })
 })
+//Search
+router.get('/search', readToken, (req, res) => {
+
+    let search = req.query.search
+    jwt.verify(req.token, config.secretKey, (err, authData) => {
+        if (err) {
+            return res.status(403).json({
+                message: err.message
+            })
+        }
+        User.find({ "_id": { "$ne": authData.id }, $or: [{ username: { $regex: '.*' + search + '.*' } }, { email: { $regex: '.*' + search + '.*' } }] }, (err, users) => {
+            if (err) {
+                console.error(err)
+                return res.status(500).json({ message: err.message })
+            }
+            if (users.length == 0) {
+                return res.json(users)
+            }
+
+            return res.json(users);
+
+        })
+    });
+})
 
 //Get single user
 router.get('/:_id', (req, res) => {

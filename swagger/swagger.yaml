@@ -167,6 +167,27 @@ paths:
         '409':
           $ref: '#/components/responses/ConflictError'
   
+  /api/users/search:
+    get:
+      tags: 
+        - Users
+      summary: Search Users
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          required: true
+      responses:
+        '200': 
+          description: Array of User objects
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/User'
+                  
   /api/users/{_id}:
     get:
       tags: 
