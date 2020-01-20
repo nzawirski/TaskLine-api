@@ -87,6 +87,27 @@ paths:
         '404': 
           $ref: '#/components/responses/NotFoundError'
 
+  /api/me/dashboard:
+    get:
+      tags:
+        - Me
+      summary: Returns single Project
+      responses:
+        '200': 
+          description: A Project object
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404': 
+          $ref: '#/components/responses/NotFoundError'
+
   /api/me/profilePic:
     put:
       tags:

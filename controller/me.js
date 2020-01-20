@@ -35,6 +35,7 @@ const readToken = require('../middleware/read-token')
 
 const User = require('../model/user')
 const Password = require('../model/password')
+const Task = require('../model/task')
 
 //get current user
 router.get('/', readToken, (req, res) => {
@@ -181,6 +182,37 @@ router.delete('/profilePic', readToken, (req, res) => {
                 } else {
                     res.status(200).send('There is no profile picture set')
                 }
+            })
+    })
+})
+
+router.get('/dashboard', readToken, (req, res) => {
+
+    jwt.verify(req.token, config.secretKey, (err, authData) => {
+        if (err) {
+            return res.status(403).json({
+                message: err.message
+            })
+        }
+        User.findById(authData.id)
+            .exec((err, user) => {
+                if (err) {
+                    return res.status(500).json({ message: err.message })
+                };
+                if (!user) {
+                    return res.status(404).send("User not found")
+                }
+                Task.find({ assigned_users: authData.id, status: {$nin: ["Completed","Canceled"]} })
+                    .sort({due_date: 1})
+                    .populate('added_by')
+                    .populate('assigned_users')
+                    .populate('parent_project', 'name members')
+                    .exec((err, tasks) => {
+                        if (err) {
+                            return res.status(500).json({ message: err.message })
+                        };
+                        res.json(tasks)
+                    })
             })
     })
 })
